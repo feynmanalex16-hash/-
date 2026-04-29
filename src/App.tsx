@@ -124,42 +124,42 @@ export default function App() {
 
   const moodColor = useMemo(() => {
     if (!currentDominant) return { 
-      bg: "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)", 
-      accent: "#1a1a1a",
-      border: "rgba(255,255,255,1)",
-      blobs: ["#f0f0f0", "#e0e0e0", "#ffffff"]
+      bg: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)", 
+      accent: "#0f172a",
+      border: "rgba(255,255,255,0.8)",
+      blobs: ["#cbd5e1", "#94a3b8", "#f1f5f9"]
     };
     
     switch (currentDominant) {
       case Dimension.ENERGY: return { 
-        bg: "linear-gradient(135deg, #fff5f5 0%, #fed7d7 50%, #feb2b2 100%)", 
-        accent: "#C53030", 
-        border: "#FEB2B2",
-        blobs: ["#fc8181", "#f56565", "#e53e3e"]
+        bg: "linear-gradient(135deg, #fff5f5 0%, #ffe4e6 50%, #fecdd3 100%)", 
+        accent: "#e11d48", 
+        border: "#fb7185",
+        blobs: ["#fb7185", "#f43f5e", "#be123c"]
       };
       case Dimension.LOGIC: return { 
-        bg: "linear-gradient(135deg, #ebf8ff 0%, #bee3f8 50%, #90cdf4 100%)", 
-        accent: "#2B6CB0", 
-        border: "#90CDF4",
-        blobs: ["#63b3ed", "#4299e1", "#3182ce"]
+        bg: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%)", 
+        accent: "#0284c7", 
+        border: "#38bdf8",
+        blobs: ["#38bdf8", "#0ea5e9", "#0369a1"]
       };
       case Dimension.SOCIAL: return { 
-        bg: "linear-gradient(135deg, #f0fff4 0%, #c6f6d5 50%, #9ae6b4 100%)", 
-        accent: "#2F855A", 
-        border: "#9AE6B4",
-        blobs: ["#68d391", "#48bb78", "#38a169"]
+        bg: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%)", 
+        accent: "#16a34a", 
+        border: "#4ade80",
+        blobs: ["#4ade80", "#22c55e", "#15803d"]
       };
       case Dimension.ADAPT: return { 
-        bg: "linear-gradient(135deg, #fffaf0 0%, #feebc8 50%, #fbd38d 100%)", 
-        accent: "#C05621", 
-        border: "#FBD38D",
-        blobs: ["#f6ad55", "#ed8936", "#dd6b20"]
+        bg: "linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%)", 
+        accent: "#d97706", 
+        border: "#fbbf24",
+        blobs: ["#fbbf24", "#f59e0b", "#b45309"]
       };
       default: return { 
-        bg: "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)", 
-        accent: "#1a1a1a",
-        border: "#ffffff",
-        blobs: ["#f0f0f0", "#e0e0e0", "#ffffff"]
+        bg: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)", 
+        accent: "#334155",
+        border: "#e2e8f0",
+        blobs: ["#cbd5e1", "#94a3b8", "#f1f5f9"]
       };
     }
   }, [currentDominant]);
@@ -204,10 +204,10 @@ export default function App() {
   };
 
   const dimColors: Record<Dimension, { accent: string; muted: string }> = {
-    [Dimension.ENERGY]: { accent: "#E53E3E", muted: "#FFF5F5" },
-    [Dimension.LOGIC]: { accent: "#3182CE", muted: "#EBF8FF" },
-    [Dimension.SOCIAL]: { accent: "#38A169", muted: "#F0FFF4" },
-    [Dimension.ADAPT]: { accent: "#DD6B20", muted: "#FFFAF0" },
+    [Dimension.ENERGY]: { accent: "#f43f5e", muted: "#fff1f2" },
+    [Dimension.LOGIC]: { accent: "#0ea5e9", muted: "#f0f9ff" },
+    [Dimension.SOCIAL]: { accent: "#22c55e", muted: "#f0fdf4" },
+    [Dimension.ADAPT]: { accent: "#f59e0b", muted: "#fffbeb" },
   };
 
   const handleAnswer = (dimension: Dimension, value: number) => {
@@ -258,6 +258,19 @@ export default function App() {
     if (SOCIAL >= 6 && ADAPT >= 6) return AnimalType.DEER;
     if (LOGIC >= 5 && SOCIAL >= 8) return AnimalType.BEE;
     if (ADAPT >= 8 && ENERGY >= 4) return AnimalType.CAT;
+
+    // Additional Tier 3 Combinations
+    if (ENERGY >= 10 && ADAPT >= 5) return AnimalType.PHOENIX;
+    if (ENERGY >= 9 && LOGIC >= 3 && SOCIAL <= 2) return AnimalType.RHINO;
+    if (ADAPT >= 10 && SOCIAL >= 5) return AnimalType.CHAMELEON;
+    if (SOCIAL >= 9 && LOGIC >= 5) return AnimalType.SWAN;
+    if (LOGIC >= 9 && ENERGY >= 5 && SOCIAL <= 2) return AnimalType.SCORPION;
+    
+    if (ENERGY >= 6 && ADAPT >= 8) return AnimalType.HORSE;
+    if (LOGIC >= 8 && ENERGY >= 4 && SOCIAL <= 3) return AnimalType.SPIDER;
+    if (ENERGY >= 7 && SOCIAL <= 4 && LOGIC >= 4) return AnimalType.SHARK;
+    if (SOCIAL >= 8 && LOGIC >= 6) return AnimalType.WHALE;
+    if (ADAPT >= 7 && SOCIAL >= 7 && LOGIC <= 4) return AnimalType.BUTTERFLY;
     
     if (ENERGY >= 4 && LOGIC >= 4 && SOCIAL >= 4 && ADAPT >= 4) return AnimalType.PANDA;
 
@@ -277,11 +290,11 @@ export default function App() {
   const currentResult = results_info[resultType];
 
   return (
-    <div className="min-h-screen p-0 sm:p-4 lg:p-8 flex items-center justify-center transition-all duration-1000 relative overflow-hidden"
+    <div className="min-h-screen p-2 sm:p-4 lg:p-8 flex items-center justify-center transition-all duration-1000 relative overflow-hidden selection:bg-black selection:text-white"
          style={{ background: step === "result" ? `linear-gradient(135deg, white 0%, ${currentResult.theme}20 100%)` : moodColor.bg }}>
       
       {/* Animated Background Blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30 md:opacity-40">
         <motion.div
           animate={{
             x: [0, 100, 0],
@@ -314,16 +327,16 @@ export default function App() {
         />
       </div>
 
-      <div className="w-full max-w-7xl min-h-screen sm:min-h-[90vh] bg-white/70 backdrop-blur-md border-0 sm:border-[12px] shadow-2xl flex flex-col p-6 md:p-12 relative overflow-x-hidden transition-all duration-700 z-10"
+      <div className="w-full max-w-7xl min-h-[100dvh] sm:min-h-[90vh] bg-white/70 backdrop-blur-md border-0 sm:border-[8px] md:border-[12px] shadow-2xl flex flex-col p-5 sm:p-8 md:p-12 relative overflow-x-hidden transition-all duration-700 z-10"
             style={{ borderColor: step === "result" ? currentResult.theme : moodColor.border }}>
         
         {/* Header decoration */}
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 md:mb-12 gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-[#1a1a1a]">
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-12 gap-4">
+          <div className="max-w-md">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-[#1a1a1a]">
               灵魂原型动物测试
             </h1>
-            <p className="text-secondary mt-2 text-sm font-medium opacity-70">
+            <p className="text-secondary mt-1 sm:mt-2 text-xs sm:text-sm font-medium opacity-70">
               {step === "result" ? "基于隐喻心理学模型的深度人格解析" : "探索你潜意识中的原始动物力量"}
             </p>
           </div>
@@ -357,13 +370,44 @@ export default function App() {
                   <div className="flex justify-center mb-6">
                      <span className="text-7xl animate-pulse">✨</span>
                   </div>
-                  <h2 className="text-4xl md:text-7xl font-serif font-light leading-tight tracking-tight text-[#1a1a1a]">
-                    荒野足迹 <br />
-                    <span className="italic" style={{ color: "#740001" }}>灵魂唤醒</span>
+                  <h2 className="text-3xl sm:text-5xl md:text-7xl font-serif font-light leading-tight tracking-tight text-[#1a1a1a]">
+                    潜意识 <br />
+                    <span className="italic" style={{ color: moodColor.accent }}>色彩图谱</span>
                   </h2>
-                  <p className="text-base md:text-lg text-secondary font-light max-w-md mx-auto leading-relaxed">
-                    在潜意识的森林深处，你的每一次抉择都将唤醒一个沉睡的原型。探索这10个关键时刻。
-                  </p>
+                  
+                  <div className="max-w-xl mx-auto space-y-4 px-2">
+                    <p className="text-sm sm:text-base md:text-lg text-secondary font-light leading-relaxed">
+                      欢迎来到这个名为“自我”的数字剧场。这不仅仅是一场测试，而是一次对你灵魂底色的精准捕捉。
+                    </p>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 text-left">
+                      <div className="p-3 border border-black/5 bg-white/40 backdrop-blur-sm rounded-lg">
+                        <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: dimColors[Dimension.ENERGY].accent }}>Red · 能量</div>
+                        <p className="text-[10px] text-secondary/60 leading-relaxed">关于生命意志的浓度，你如何在那无声的荒原中开辟属于自己的道路。</p>
+                      </div>
+                      <div className="p-3 border border-black/5 bg-white/40 backdrop-blur-sm rounded-lg">
+                        <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: dimColors[Dimension.LOGIC].accent }}>Blue · 智性</div>
+                        <p className="text-[10px] text-secondary/60 leading-relaxed">关于逻辑的刻度，你如何在纷杂的表象之下，解码世界的底层真理。</p>
+                      </div>
+                      <div className="p-3 border border-black/5 bg-white/40 backdrop-blur-sm rounded-lg">
+                        <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: dimColors[Dimension.SOCIAL].accent }}>Green · 共振</div>
+                        <p className="text-[10px] text-secondary/60 leading-relaxed">关于灵魂的同频，你如何跨越孤独的深渊，与另一颗星球建立连接。</p>
+                      </div>
+                      <div className="p-3 border border-black/5 bg-white/40 backdrop-blur-sm rounded-lg">
+                        <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: dimColors[Dimension.ADAPT].accent }}>Amber · 多变</div>
+                        <p className="text-[10px] text-secondary/60 leading-relaxed">关于生存的弧度，你如何在规则的缝隙中游刃有余地保持自身的流动。</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-6 space-y-3">
+                    <p className="text-[11px] text-secondary/60 font-medium uppercase tracking-[0.2em]">
+                      ※ 请凭直觉选择最触动你的画面
+                    </p>
+                    <p className="text-[10px] text-secondary/40 uppercase tracking-[0.15em] max-w-sm mx-auto leading-relaxed">
+                      没有“正确”的答案，只有“真实”的投影。我们将通过30颗感知锚点，计算出你当前的生命位型。
+                    </p>
+                  </div>
                 </div>
 
                 <motion.button
@@ -395,8 +439,8 @@ export default function App() {
                       transition={{ duration: 0.5 }}
                     />
                   </div>
-                  <h2 className="text-2xl md:text-4xl lg:text-5xl font-serif leading-tight text-[#1a1a1a]">
-                    <span className="italic mr-4" style={{ color: moodColor.accent }}>Q{quizQuestions[currentIdx].id}</span>
+                  <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif leading-tight text-[#1a1a1a]">
+                    <span className="italic mr-2 sm:mr-4" style={{ color: moodColor.accent }}>Q{currentIdx + 1}</span>
                     {quizQuestions[currentIdx].question}
                   </h2>
 
@@ -434,7 +478,7 @@ export default function App() {
                             className="absolute inset-0 opacity-0 group-active:opacity-100 transition-opacity"
                             style={{ backgroundColor: `${colors.accent}10` }}
                           />
-                          <span className="text-sm md:text-base font-light text-secondary group-hover:text-black transition-colors leading-tight pr-4 z-10">
+                          <span className="text-sm sm:text-base font-light text-secondary group-hover:text-black transition-colors leading-snug sm:leading-tight pr-4 z-10">
                             {opt.text}
                           </span>
                           <span 
@@ -460,14 +504,14 @@ export default function App() {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6"
               >
                 {/* Result Reveal Section */}
-                <div className="md:col-span-1 lg:col-span-4 lg:row-span-3 bento-card flex flex-col justify-between relative overflow-hidden min-h-[350px] md:min-h-[400px] border-2 transition-all duration-1000"
+                <div className="md:col-span-2 lg:col-span-4 lg:row-span-3 bento-card flex flex-col justify-between relative overflow-hidden min-h-[300px] sm:min-h-[350px] border-2 transition-all duration-1000"
                      style={{ borderColor: currentResult.theme, backgroundColor: `${currentResult.theme}10` }}>
                   <div className="z-10">
                     <p className="text-[10px] font-bold uppercase tracking-[0.3em] mb-3"
                        style={{ color: currentResult.theme }}>灵魂图谱映射</p>
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-[#1a1a1a]">{currentResult.name}</h2>
-                      <span className="text-4xl md:text-5xl">{currentResult.emoji}</span>
+                    <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+                      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif italic text-[#1a1a1a]">{currentResult.name}</h2>
+                      <span className="text-3xl sm:text-4xl lg:text-5xl">{currentResult.emoji}</span>
                     </div>
                     <p className="text-secondary mt-4 opacity-70 font-medium text-sm">
                        原型动物 / 系统检测到极强的 {currentResult.keywords[0]} 倾向
@@ -488,13 +532,13 @@ export default function App() {
                 </div>
 
                 {/* Radar Chart Section */}
-                <div className="md:col-span-1 lg:col-span-4 lg:row-span-3 bento-card flex flex-col items-center justify-center bg-white/40 border-dashed border min-h-[300px]">
+                <div className="md:col-span-2 lg:col-span-4 lg:row-span-3 bento-card flex flex-col items-center justify-center bg-white/40 border-dashed border min-h-[250px] sm:min-h-[300px]">
                   <p className="text-[10px] font-bold uppercase tracking-widest mb-6"
                      style={{ color: currentResult.theme }}>心理向量侧写</p>
-                  <div className="scale-90 md:scale-100">
+                  <div className="scale-75 sm:scale-90 md:scale-100">
                     <RadarChart data={scores} color={currentResult.theme} />
                   </div>
-                  <div className="mt-8 grid grid-cols-2 gap-x-4 md:gap-x-8 gap-y-2">
+                  <div className="mt-4 sm:mt-8 grid grid-cols-2 gap-x-6 sm:gap-x-8 gap-y-2">
                     {(Object.entries(scores) as [Dimension, number][]).map(([dim, val]) => (
                         <div key={dim} className="flex items-center justify-between gap-4">
                             <span className="text-[9px] md:text-[10px] text-secondary font-bold uppercase">{dim}</span>
@@ -505,13 +549,13 @@ export default function App() {
                 </div>
 
                 {/* Core Insight */}
-                <div className="md:col-span-1 lg:col-span-4 lg:row-span-1 bento-card flex flex-col border-l-4"
+                <div className="md:col-span-2 lg:col-span-4 lg:row-span-1 bento-card flex flex-col border-l-4"
                      style={{ borderColor: currentResult.theme }}>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] mb-4 flex items-center gap-2"
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] mb-3 md:mb-4 flex items-center gap-2"
                      style={{ color: currentResult.theme }}>
                     <Quote size={12} /> 原始箴言 / 魂之咒语
                   </p>
-                  <p className="text-base md:text-lg lg:text-xl leading-relaxed text-[#1a1a1a] font-serif italic">
+                  <p className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed text-[#1a1a1a] font-serif italic">
                     {currentResult.insight}
                   </p>
                 </div>
@@ -523,9 +567,9 @@ export default function App() {
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest mb-1"
                          style={{ color: currentResult.theme }}>灵魂契合</p>
-                      <h3 className="text-xl font-serif">灵魂伴侣</h3>
+                      <h3 className="text-lg sm:text-xl font-serif">灵魂伴侣</h3>
                     </div>
-                    <Heart size={24} className="text-accent animate-pulse fill-accent/10" />
+                    <Heart size={20} className="text-accent animate-pulse fill-accent/10" />
                   </div>
                   <div className="mt-4 flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white border border-secondary/10 text-2xl">
@@ -541,7 +585,18 @@ export default function App() {
                        currentResult.soulmate.includes('猫') ? '🐈' :
                        currentResult.soulmate.includes('熊') ? '🐻‍❄️' :
                        currentResult.soulmate.includes('鹿') ? '🦌' :
-                       currentResult.soulmate.includes('蜂') ? '🐝' : '✨'}
+                       currentResult.soulmate.includes('蜂') ? '🐝' : 
+                       currentResult.soulmate.includes('鲸') ? '🐋' :
+                       currentResult.soulmate.includes('马') ? '🐎' :
+                       currentResult.soulmate.includes('鲨') ? '🦈' :
+                       currentResult.soulmate.includes('蛛') ? '🕷️' :
+                       currentResult.soulmate.includes('蝶') ? '🦋' : 
+                       currentResult.soulmate.includes('鸟') ? '🏮' : 
+                       currentResult.soulmate.includes('犀') ? '🦏' : 
+                       currentResult.soulmate.includes('色龙') ? '🦎' : 
+                       currentResult.soulmate.includes('巨龙') ? '🐲' : 
+                       currentResult.soulmate.includes('鹅') ? '🦢' : 
+                       currentResult.soulmate.includes('蝎') ? '🦂' : '✨'}
                     </div>
                     <div>
                       <p className="text-sm font-bold text-[#1a1a1a]">{currentResult.soulmate.split(' (')[0]}</p>
@@ -554,16 +609,29 @@ export default function App() {
                 </div>
 
                 {/* Detail Blocks */}
+                <div className="md:col-span-2 lg:col-span-8 lg:row-span-2 bento-card flex flex-col bg-white/60 border-t-4"
+                     style={{ borderColor: currentResult.theme }}>
+                   <p className="text-[10px] font-bold uppercase tracking-[0.3em] mb-4 flex items-center gap-2"
+                      style={{ color: currentResult.theme }}>
+                     <Sparkles size={12} /> 深度生命轨迹 / Detailed Path
+                   </p>
+                   <div className="space-y-4">
+                     <p className="text-sm sm:text-base leading-relaxed text-secondary/80 font-serif whitespace-pre-wrap">
+                       {currentResult.detailedDescription}
+                     </p>
+                   </div>
+                </div>
+
                 <div className="md:col-span-1 lg:col-span-4 lg:row-span-1 bento-card flex flex-col justify-between">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-widest mb-1"
                        style={{ color: currentResult.theme }}>Strengths & Gifts</p>
-                    <h3 className="text-xl font-serif">天赋能力</h3>
+                    <h3 className="text-lg sm:text-xl font-serif">天赋能力</h3>
                   </div>
-                  <ul className="mt-4 grid grid-cols-1 gap-2">
+                  <ul className="mt-3 md:mt-4 grid grid-cols-1 gap-2">
                     {currentResult.pros?.map((pro, i) => (
-                      <li key={i} className="text-sm text-secondary flex items-center gap-2">
-                        <div className="w-1 h-1 rounded-full" style={{ backgroundColor: currentResult.theme }} /> {pro}
+                      <li key={i} className="text-xs sm:text-sm text-secondary flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: currentResult.theme }} /> {pro}
                       </li>
                     ))}
                   </ul>
@@ -574,19 +642,45 @@ export default function App() {
                     <div>
                         <p className="text-[10px] font-bold uppercase tracking-widest mb-1"
                         style={{ color: currentResult.theme }}>Shadow Side</p>
-                        <h3 className="text-xl font-serif">阴影人格</h3>
+                        <h3 className="text-lg sm:text-xl font-serif">阴影人格</h3>
                     </div>
-                    <Info size={20} className="opacity-20" />
+                    <Info size={16} className="opacity-20" />
                    </div>
-                  <p className="text-sm leading-relaxed text-secondary italic mt-3">
+                  <p className="text-xs sm:text-sm leading-relaxed text-secondary italic mt-3">
                     “{currentResult.minefield}”
                   </p>
                 </div>
 
+                {/* Dimension Note / No Right or Wrong Check */}
+                <div className="sm:col-span-2 lg:col-span-12 bento-card bg-white/40 border border-dashed p-6">
+                   <p className="text-[10px] font-bold uppercase tracking-[0.3em] mb-4 text-center opacity-60">人格光谱意涵 / The Spectrum Note</p>
+                   <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                      <div className="space-y-1">
+                        <div className="text-[10px] font-bold" style={{ color: dimColors[Dimension.ENERGY].accent }}>赤红 · 能量</div>
+                        <div className="text-[9px] text-secondary/60">代表生命意志的浓度与突破困境的爆发力</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-[10px] font-bold" style={{ color: dimColors[Dimension.LOGIC].accent }}>蔚蓝 · 智性</div>
+                        <div className="text-[9px] text-secondary/60">代表解码复杂的逻辑深度与对真理的渴求</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-[10px] font-bold" style={{ color: dimColors[Dimension.SOCIAL].accent }}>翠绿 · 共振</div>
+                        <div className="text-[9px] text-secondary/60">代表情感的同频能力与建立深度联结的温情</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-[10px] font-bold" style={{ color: dimColors[Dimension.ADAPT].accent }}>琥珀 · 多变</div>
+                        <div className="text-[9px] text-secondary/60">代表生存智慧的灵活性与游走规则的生命力</div>
+                      </div>
+                   </div>
+                   <p className="mt-6 text-[10px] text-center text-secondary opacity-40 leading-relaxed uppercase tracking-widest">
+                     注意：色彩的深浅并非衡量优秀的标准，而是你在这一刻生命投影的真实显现。
+                   </p>
+                </div>
+
                 {/* Bottom CTA */}
-                <div className="sm:col-span-2 lg:col-span-12 bento-card bg-[#1a1a1a] text-secondary p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 shadow-2xl">
-                  <div className="space-y-4 max-w-xl text-center md:text-left">
-                    <h4 className="text-bg-base font-serif text-xl md:text-2xl italic">觉醒已完成。</h4>
+                <div className="md:col-span-2 lg:col-span-12 bento-card bg-[#1a1a1a] text-secondary p-5 sm:p-8 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 shadow-2xl">
+                  <div className="space-y-3 sm:space-y-4 max-w-xl text-center md:text-left">
+                    <h4 className="text-bg-base font-serif text-lg sm:text-xl md:text-2xl italic">觉醒已完成。</h4>
                     <p className="text-[10px] text-secondary/60 uppercase tracking-widest leading-relaxed">
                       基于本轮 {quizQuestions.length} 项维度交叉验证。Archetype 已为您更新了最新的心理向量图谱。每一次测试都是对灵魂边界的再次确认。
                     </p>

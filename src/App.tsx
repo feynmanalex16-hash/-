@@ -6,7 +6,17 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight, RefreshCcw, Sparkles, Quote, Info, Heart, Settings2, BarChart3 } from "lucide-react";
-import { questions, results_info, AnimalType, Dimension } from "./data";
+import { questions as allQuestions, results_info, AnimalType, Dimension } from "./data";
+
+// Helper to shuffle an array
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
 
 // Helper for Radar Chart lines and polygons
 const RadarChart = ({ data, color }: { data: Record<Dimension, number>; color: string }) => {
@@ -96,6 +106,7 @@ const RadarChart = ({ data, color }: { data: Record<Dimension, number>; color: s
 
 export default function App() {
   const [step, setStep] = useState<"welcome" | "quiz" | "result">("welcome");
+  const [quizQuestions, setQuizQuestions] = useState(allQuestions.slice(0, 10));
   const [currentIdx, setCurrentIdx] = useState(0);
   const [scores, setScores] = useState<Record<Dimension, number>>({
     [Dimension.ENERGY]: 0,
@@ -105,7 +116,7 @@ export default function App() {
   });
 
   const currentDominant = useMemo(() => {
-    const entries = Object.entries(scores);
+    const entries = Object.entries(scores) as [Dimension, number][];
     const sorted = entries.sort((a, b) => b[1] - a[1]);
     if (sorted[0][1] === 0) return null;
     return sorted[0][0] as Dimension;
@@ -115,39 +126,47 @@ export default function App() {
     if (!currentDominant) return { 
       bg: "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)", 
       accent: "#1a1a1a",
-      border: "rgba(255,255,255,1)"
+      border: "rgba(255,255,255,1)",
+      blobs: ["#f0f0f0", "#e0e0e0", "#ffffff"]
     };
     
     switch (currentDominant) {
       case Dimension.ENERGY: return { 
-        bg: "linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%)", 
+        bg: "linear-gradient(135deg, #fff5f5 0%, #fed7d7 50%, #feb2b2 100%)", 
         accent: "#C53030", 
-        border: "#FEB2B2"
+        border: "#FEB2B2",
+        blobs: ["#fc8181", "#f56565", "#e53e3e"]
       };
       case Dimension.LOGIC: return { 
-        bg: "linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%)", 
+        bg: "linear-gradient(135deg, #ebf8ff 0%, #bee3f8 50%, #90cdf4 100%)", 
         accent: "#2B6CB0", 
-        border: "#90CDF4"
+        border: "#90CDF4",
+        blobs: ["#63b3ed", "#4299e1", "#3182ce"]
       };
       case Dimension.SOCIAL: return { 
-        bg: "linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%)", 
+        bg: "linear-gradient(135deg, #f0fff4 0%, #c6f6d5 50%, #9ae6b4 100%)", 
         accent: "#2F855A", 
-        border: "#9AE6B4"
+        border: "#9AE6B4",
+        blobs: ["#68d391", "#48bb78", "#38a169"]
       };
       case Dimension.ADAPT: return { 
-        bg: "linear-gradient(135deg, #fffaf0 0%, #feebc8 100%)", 
+        bg: "linear-gradient(135deg, #fffaf0 0%, #feebc8 50%, #fbd38d 100%)", 
         accent: "#C05621", 
-        border: "#FBD38D"
+        border: "#FBD38D",
+        blobs: ["#f6ad55", "#ed8936", "#dd6b20"]
       };
       default: return { 
         bg: "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)", 
         accent: "#1a1a1a",
-        border: "#ffffff"
+        border: "#ffffff",
+        blobs: ["#f0f0f0", "#e0e0e0", "#ffffff"]
       };
     }
   }, [currentDominant]);
 
   const startQuiz = () => {
+    const randomized = shuffleArray(allQuestions).slice(0, 10);
+    setQuizQuestions(randomized);
     setStep("quiz");
     setCurrentIdx(0);
     setScores({
@@ -198,7 +217,7 @@ export default function App() {
     
     // Tiny delay to let the 'jump' animation and sound be felt
     setTimeout(() => {
-      if (currentIdx < questions.length - 1) {
+      if (currentIdx < quizQuestions.length - 1) {
         setCurrentIdx(currentIdx + 1);
       } else {
         setStep("result");
@@ -220,28 +239,35 @@ export default function App() {
   const getResult = () => {
     const { ENERGY, LOGIC, SOCIAL, ADAPT } = scores;
     
-    // Core Logic (Threshold increased for 15 questions)
-    if (ENERGY >= 10) return AnimalType.LION;
-    if (LOGIC >= 10) return AnimalType.OWL;
-    if (SOCIAL >= 10) return AnimalType.DOLPHIN;
-    if (ADAPT >= 10) return AnimalType.FOX;
+    // Core Logic
+    if (ENERGY >= 12) return AnimalType.LION;
+    if (LOGIC >= 12) return AnimalType.OWL;
+    if (SOCIAL >= 12) return AnimalType.DOLPHIN;
+    if (ADAPT >= 12) return AnimalType.FOX;
     
     // Combination Animals (Higher threshold)
+    if (ENERGY >= 8 && LOGIC >= 8) return AnimalType.HAWK;
     if (ENERGY >= 7 && LOGIC >= 7) return AnimalType.DRAGON;
     if (SOCIAL >= 7 && ADAPT >= 7) return AnimalType.PEACOCK;
     if (LOGIC >= 7 && ADAPT >= 7) return AnimalType.TIGER;
     if (ENERGY >= 7 && ADAPT >= 7) return AnimalType.WOLF;
     if (LOGIC >= 7 && SOCIAL >= 7) return AnimalType.ELEPHANT;
     
+    // New Tier 2 Combinations
+    if (ENERGY >= 8 && ADAPT <= 3) return AnimalType.POLAR_BEAR;
+    if (SOCIAL >= 6 && ADAPT >= 6) return AnimalType.DEER;
+    if (LOGIC >= 5 && SOCIAL >= 8) return AnimalType.BEE;
+    if (ADAPT >= 8 && ENERGY >= 4) return AnimalType.CAT;
+    
     if (ENERGY >= 4 && LOGIC >= 4 && SOCIAL >= 4 && ADAPT >= 4) return AnimalType.PANDA;
 
-    const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    const sorted = (Object.entries(scores) as [Dimension, number][]).sort((a, b) => b[1] - a[1]);
     const topDim = sorted[0][0] as Dimension;
     
     switch(topDim) {
       case Dimension.ENERGY: return AnimalType.LION;
       case Dimension.LOGIC: return AnimalType.OWL;
-      case Dimension.SOCIAL: return AnimalType.DOLPHIN;
+      case Dimension.SOCIAL: return AnimalType.BADGER;
       case Dimension.ADAPT: return AnimalType.FOX;
       default: return AnimalType.LION;
     }
@@ -251,9 +277,44 @@ export default function App() {
   const currentResult = results_info[resultType];
 
   return (
-    <div className="min-h-screen p-0 sm:p-4 lg:p-8 flex items-center justify-center transition-all duration-1000"
+    <div className="min-h-screen p-0 sm:p-4 lg:p-8 flex items-center justify-center transition-all duration-1000 relative overflow-hidden"
          style={{ background: step === "result" ? `linear-gradient(135deg, white 0%, ${currentResult.theme}20 100%)` : moodColor.bg }}>
-      <div className="w-full max-w-7xl min-h-screen sm:min-h-[90vh] bg-white/80 backdrop-blur-sm border-0 sm:border-[12px] shadow-2xl flex flex-col p-6 md:p-12 relative overflow-x-hidden transition-all duration-700"
+      
+      {/* Animated Background Blobs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+        <motion.div
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 rounded-full blur-[120px]"
+          style={{ backgroundColor: moodColor.blobs[0] }}
+        />
+        <motion.div
+          animate={{
+            x: [0, -80, 0],
+            y: [0, 100, 0],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 rounded-full blur-[120px]"
+          style={{ backgroundColor: moodColor.blobs[1] }}
+        />
+        <motion.div
+          animate={{
+            x: [0, 50, 0],
+            y: [0, 80, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          className="absolute top-1/4 right-1/4 w-1/3 h-1/3 rounded-full blur-[100px]"
+          style={{ backgroundColor: moodColor.blobs[2] }}
+        />
+      </div>
+
+      <div className="w-full max-w-7xl min-h-screen sm:min-h-[90vh] bg-white/70 backdrop-blur-md border-0 sm:border-[12px] shadow-2xl flex flex-col p-6 md:p-12 relative overflow-x-hidden transition-all duration-700 z-10"
             style={{ borderColor: step === "result" ? currentResult.theme : moodColor.border }}>
         
         {/* Header decoration */}
@@ -273,11 +334,11 @@ export default function App() {
                   style={{ backgroundColor: `${moodColor.accent}15`, color: moodColor.accent }}
                 >
                     <Settings2 size={12} className="animate-spin-slow" />
-                    ARCHETYPE SHIFT: {currentDominant ? currentDominant : "STABILIZING..."}
+                    人格偏移: {currentDominant ? (currentDominant === Dimension.ENERGY ? "能量" : currentDominant === Dimension.LOGIC ? "逻辑" : currentDominant === Dimension.SOCIAL ? "社交" : "适应") : "稳定中..."}
                 </div>
             )}
             <div className="btn-outline cursor-default whitespace-nowrap">
-              {step === "welcome" ? "WAKING UP" : step === "quiz" ? `JOURNEY: ${currentIdx + 1}/${questions.length}` : "AWAKENING COMPLETE"}
+              {step === "welcome" ? "唤醒中" : step === "quiz" ? `旅程: ${currentIdx + 1}/${quizQuestions.length}` : "觉醒完成"}
             </div>
           </div>
         </header>
@@ -330,17 +391,17 @@ export default function App() {
                       className="h-full shadow-[0_0_10px_rgba(0,0,0,0.1)]"
                       style={{ backgroundColor: moodColor.accent }}
                       initial={{ width: 0 }}
-                      animate={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}
+                      animate={{ width: `${((currentIdx + 1) / quizQuestions.length) * 100}%` }}
                       transition={{ duration: 0.5 }}
                     />
                   </div>
                   <h2 className="text-2xl md:text-4xl lg:text-5xl font-serif leading-tight text-[#1a1a1a]">
-                    <span className="italic mr-4" style={{ color: moodColor.accent }}>Q{questions[currentIdx].id}</span>
-                    {questions[currentIdx].question}
+                    <span className="italic mr-4" style={{ color: moodColor.accent }}>Q{quizQuestions[currentIdx].id}</span>
+                    {quizQuestions[currentIdx].question}
                   </h2>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {questions[currentIdx].options.map((opt, i) => {
+                    {quizQuestions[currentIdx].options.map((opt, i) => {
                       const colors = dimColors[opt.dimension];
                       return (
                         <motion.button
@@ -381,7 +442,7 @@ export default function App() {
                             style={{ color: `${colors.accent}60` }}
                           >
                             <Sparkles size={10} className="animate-pulse" />
-                            Analyzing...
+                            解析中...
                           </span>
                         </motion.button>
                       );
@@ -403,13 +464,13 @@ export default function App() {
                      style={{ borderColor: currentResult.theme, backgroundColor: `${currentResult.theme}10` }}>
                   <div className="z-10">
                     <p className="text-[10px] font-bold uppercase tracking-[0.3em] mb-3"
-                       style={{ color: currentResult.theme }}>Archetype Soul Mapping</p>
+                       style={{ color: currentResult.theme }}>灵魂图谱映射</p>
                     <div className="flex items-center gap-4 flex-wrap">
-                      <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-[#1a1a1a]">{currentResult.name.split(' (')[0]}</h2>
+                      <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-[#1a1a1a]">{currentResult.name}</h2>
                       <span className="text-4xl md:text-5xl">{currentResult.emoji}</span>
                     </div>
                     <p className="text-secondary mt-4 opacity-70 font-medium text-sm">
-                       {currentResult.name.split(' (')[1].replace(')', '')} / 系统检测到极强的 {currentResult.keywords[0]} 倾向
+                       原型动物 / 系统检测到极强的 {currentResult.keywords[0]} 倾向
                     </p>
                   </div>
                   
@@ -429,12 +490,12 @@ export default function App() {
                 {/* Radar Chart Section */}
                 <div className="md:col-span-1 lg:col-span-4 lg:row-span-3 bento-card flex flex-col items-center justify-center bg-white/40 border-dashed border min-h-[300px]">
                   <p className="text-[10px] font-bold uppercase tracking-widest mb-6"
-                     style={{ color: currentResult.theme }}>Psychological Vector Profile</p>
+                     style={{ color: currentResult.theme }}>心理向量侧写</p>
                   <div className="scale-90 md:scale-100">
                     <RadarChart data={scores} color={currentResult.theme} />
                   </div>
                   <div className="mt-8 grid grid-cols-2 gap-x-4 md:gap-x-8 gap-y-2">
-                    {Object.entries(scores).map(([dim, val]) => (
+                    {(Object.entries(scores) as [Dimension, number][]).map(([dim, val]) => (
                         <div key={dim} className="flex items-center justify-between gap-4">
                             <span className="text-[9px] md:text-[10px] text-secondary font-bold uppercase">{dim}</span>
                             <span className="text-xs font-mono" style={{ color: currentResult.theme }}>{val.toFixed(1)}</span>
@@ -448,7 +509,7 @@ export default function App() {
                      style={{ borderColor: currentResult.theme }}>
                   <p className="text-[10px] font-bold uppercase tracking-[0.3em] mb-4 flex items-center gap-2"
                      style={{ color: currentResult.theme }}>
-                    <Quote size={12} /> Primal Mantra / 魂之咒语
+                    <Quote size={12} /> 原始箴言 / 魂之咒语
                   </p>
                   <p className="text-base md:text-lg lg:text-xl leading-relaxed text-[#1a1a1a] font-serif italic">
                     {currentResult.insight}
@@ -461,7 +522,7 @@ export default function App() {
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest mb-1"
-                         style={{ color: currentResult.theme }}>Soulmate Match</p>
+                         style={{ color: currentResult.theme }}>灵魂契合</p>
                       <h3 className="text-xl font-serif">灵魂伴侣</h3>
                     </div>
                     <Heart size={24} className="text-accent animate-pulse fill-accent/10" />
@@ -469,12 +530,18 @@ export default function App() {
                   <div className="mt-4 flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white border border-secondary/10 text-2xl">
                       {currentResult.soulmate.includes('狮') ? '🦁' : 
-                       currentResult.soulmate.includes('枭') || currentResult.soulmate.includes('鹰') || currentResult.soulmate.includes('头') ? '🦉' :
+                       currentResult.soulmate.includes('鹰') ? '🦅' :
+                       currentResult.soulmate.includes('枭') || currentResult.soulmate.includes('头') ? '🦉' :
                        currentResult.soulmate.includes('獾') ? '🦡' :
-                       currentResult.soulmate.includes('蛇') ? '🐍' :
+                       currentResult.soulmate.includes('狐') ? '🦊' :
                        currentResult.soulmate.includes('狼') ? '🐺' :
                        currentResult.soulmate.includes('豚') ? '🐬' :
-                       currentResult.soulmate.includes('象') ? '🐘' : '🦊'}
+                       currentResult.soulmate.includes('象') ? '🐘' :
+                       currentResult.soulmate.includes('蛇') ? '🐍' :
+                       currentResult.soulmate.includes('猫') ? '🐈' :
+                       currentResult.soulmate.includes('熊') ? '🐻‍❄️' :
+                       currentResult.soulmate.includes('鹿') ? '🦌' :
+                       currentResult.soulmate.includes('蜂') ? '🐝' : '✨'}
                     </div>
                     <div>
                       <p className="text-sm font-bold text-[#1a1a1a]">{currentResult.soulmate.split(' (')[0]}</p>
@@ -521,7 +588,7 @@ export default function App() {
                   <div className="space-y-4 max-w-xl text-center md:text-left">
                     <h4 className="text-bg-base font-serif text-xl md:text-2xl italic">觉醒已完成。</h4>
                     <p className="text-[10px] text-secondary/60 uppercase tracking-widest leading-relaxed">
-                      基于本轮 {questions.length} 项维度交叉验证。Archetype 已为您更新了最新的心理向量图谱。每一次测试都是对灵魂边界的再次确认。
+                      基于本轮 {quizQuestions.length} 项维度交叉验证。Archetype 已为您更新了最新的心理向量图谱。每一次测试都是对灵魂边界的再次确认。
                     </p>
                   </div>
                   <div className="flex shrink-0 gap-4 w-full md:w-auto">
@@ -543,12 +610,12 @@ export default function App() {
 
         <footer className="mt-12 flex flex-col md:flex-row justify-between items-center gap-4 text-center">
           <div className="text-[10px] text-secondary opacity-50 uppercase tracking-[0.3em]">
-            Archetype / Multi-Vector Psychological Mapping
+            原型测试 / 多维度心理图谱
           </div>
           <div className="flex items-center gap-3">
              <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></div>
              <span className="text-[10px] text-[#1a1a1a] font-bold uppercase tracking-widest">
-               Psychology Model Registered
+               心理理论架构已备案
              </span>
           </div>
         </footer>
